@@ -7,7 +7,9 @@ function env() {
   const lovableKey = process.env.LOVABLE_API_KEY;
   const sheetsKey = process.env.GOOGLE_SHEETS_API_KEY;
   const sheetId = process.env.ALUMNI_SHEET_ID;
-  const tab = process.env.ALUMNI_SHEET_TAB || "Sheet1";
+  const rawTab = process.env.ALUMNI_SHEET_TAB;
+  // Guard against gid-style values (e.g. "0") accidentally stored as tab name
+  const tab = !rawTab || /^\d+$/.test(rawTab) ? "Sheet1" : rawTab;
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!lovableKey) throw new Error("LOVABLE_API_KEY is not configured");
   if (!sheetsKey) throw new Error("GOOGLE_SHEETS_API_KEY is not configured");
