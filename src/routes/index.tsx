@@ -96,12 +96,20 @@ function Index() {
               JNV Alumni Directory
             </span>
           </div>
-          <Link
-            to="/admin"
-            className="text-xs text-primary-foreground/70 hover:text-primary-foreground"
-          >
-            Admin
-          </Link>
+          <nav className="flex items-center gap-4 text-xs">
+            <Link
+              to="/visualize"
+              className="text-primary-foreground/80 hover:text-primary-foreground"
+            >
+              Visualize
+            </Link>
+            <Link
+              to="/admin"
+              className="text-primary-foreground/70 hover:text-primary-foreground"
+            >
+              Admin
+            </Link>
+          </nav>
         </div>
       </header>
 
