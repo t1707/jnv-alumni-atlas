@@ -28,12 +28,16 @@ export const Route = createFileRoute("/admin")({
 
 type Data = { header: string[]; rows: string[][] };
 
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+
 function Admin() {
   const load = useServerFn(listAlumni);
   const [password, setPassword] = useState("");
   const [data, setData] = useState<Data | null>(null);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
 
   const onLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +45,7 @@ function Admin() {
     try {
       const res = await load({ data: { password } });
       setData(res);
+      setPage(1);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -70,6 +75,11 @@ function Admin() {
     URL.revokeObjectURL(url);
   };
 
+  // Reset page when query changes
+  useEffect(() => {
+    setPage(1);
+  }, [query]);
+
   const filtered = data
     ? data.rows.filter((r) =>
         query.trim()
@@ -77,6 +87,15 @@ function Admin() {
           : true,
       )
     : [];
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const startIndex = (safePage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, filtered.length);
+  const paginated = filtered.slice(startIndex, endIndex);
+
+  // Keep page in bounds if totalPages shrank
+  const currentPage = safePage;
 
   return (
     <div className="min-h-screen bg-background">
@@ -171,7 +190,7 @@ function Admin() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row, ri) => (
+                {paginated.map((row, ri) => (
                   <tr
                     key={ri}
                     className="border-t last:border-b hover:bg-accent/40"
@@ -186,7 +205,7 @@ function Admin() {
                     ))}
                   </tr>
                 ))}
-                {filtered.length === 0 ? (
+                {paginated.length === 0 ? (
                   <tr>
                     <td
                       colSpan={data.header.length}
@@ -198,6 +217,65 @@ function Admin() {
                 ) : null}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>
+                Showing <span className="font-medium text-foreground">{filtered.length > 0 ? startIndex + 1 : 0}</span>
+                {" "}–{" "}
+                <span className="font-medium text-foreground">{endIndex}</span> of{" "}
+                <span className="font-medium text-foreground">{filtered.length}</span>
+              </span>
+              <span className="hidden sm:inline">·</span>
+              <div className="flex items-center gap-1.5">
+                <span className="hidden sm:inline text-xs">Per page</span>
+                <Select
+                  value={String(pageSize)}
+                  onValueChange={(v) => {
+                    setPageSize(Number(v));
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-[70px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PAGE_SIZE_OPTIONS.map((n) => (
+                      <SelectItem key={n} value={String(n)}>
+                        {n}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Previous</span>
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Page <span className="font-medium text-foreground">{currentPage}</span> of{" "}
+                <span className="font-medium text-foreground">{totalPages}</span>
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage >= totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+                <span className="sr-only">Next</span>
+              </Button>
+            </div>
           </div>
         </main>
       )}
