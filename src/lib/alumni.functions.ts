@@ -105,3 +105,39 @@ export const listAlumni = createServerFn({ method: "POST" })
     const [header = [], ...rows] = values;
     return { header, rows };
   });
+
+// Public listing: strips mobile + email
+export const listAlumniPublic = createServerFn({ method: "GET" }).handler(async () => {
+  const { lovableKey, sheetsKey, sheetId, tab } = env();
+  const url = `${GATEWAY}/spreadsheets/${sheetId}/values/${tab}!A1:K10000`;
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${lovableKey}`,
+      "X-Connection-Api-Key": sheetsKey,
+    },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Sheets public read failed", res.status, text);
+    throw new Error(`Failed to load (${res.status})`);
+  }
+  const json = (await res.json()) as { values?: string[][] };
+  const values = json.values || [];
+  const [, ...rows] = values;
+  // Columns: 0 Timestamp, 1 Name, 2 Batch, 3 Mobile, 4 Address, 5 Occupation,
+  // 6 Department, 7 Post, 8 Posting Place, 9 Remarks, 10 Email
+  const sanitized = rows
+    .filter((r) => (r[1] || "").trim().length > 0)
+    .map((r) => ({
+      name: r[1] || "",
+      batch: r[2] || "",
+      address: r[4] || "",
+      occupation: r[5] || "",
+      department: r[6] || "",
+      post: r[7] || "",
+      postingPlace: r[8] || "",
+      remarks: r[9] || "",
+    }));
+  return { alumni: sanitized };
+});
+
