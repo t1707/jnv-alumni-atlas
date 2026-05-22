@@ -260,7 +260,7 @@ function MapView({ alumni }: { alumni: Alumnus[] }) {
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{ scale: 140 }}
-          style={{ width: "100%", height: "560px", background: "hsl(var(--muted))" }}
+          style={{ width: "100%", height: "560px", background: "var(--muted)" }}
         >
           <ZoomableGroup
             zoom={position.zoom}
@@ -275,12 +275,12 @@ function MapView({ alumni }: { alumni: Alumnus[] }) {
                   <Geography
                     key={geo.rsmKey}
                     geography={geo}
-                    fill="hsl(var(--card))"
-                    stroke="hsl(var(--border))"
+                    fill="var(--card)"
+                    stroke="var(--border)"
                     strokeWidth={0.4}
                     style={{
                       default: { outline: "none" },
-                      hover: { fill: "hsl(var(--accent))", outline: "none" },
+                      hover: { fill: "var(--accent)", outline: "none" },
                       pressed: { outline: "none" },
                     }}
                   />
@@ -298,8 +298,8 @@ function MapView({ alumni }: { alumni: Alumnus[] }) {
                 >
                   <circle
                     r={r}
-                    fill="hsl(var(--primary))"
-                    stroke="hsl(var(--background))"
+                    fill="var(--primary)"
+                    stroke="var(--background)"
                     strokeWidth={1 / Math.sqrt(position.zoom)}
                     style={{ cursor: "pointer" }}
                   />
