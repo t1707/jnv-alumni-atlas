@@ -15,7 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 
 const WORLD_TOPO =
   "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
