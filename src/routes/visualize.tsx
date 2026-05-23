@@ -15,7 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 
 const WORLD_TOPO =
   "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -122,6 +129,9 @@ function VisualizePage() {
 
 function SearchView({ alumni }: { alumni: Alumnus[] }) {
   const [q, setQ] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     if (!needle) return alumni;
@@ -133,13 +143,17 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
     );
   }, [q, alumni]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   return (
     <div className="space-y-4">
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={(e) => { setQ(e.target.value); setPage(1); }}
           placeholder="Search by name, batch, occupation, place…"
           className="pl-9"
         />
@@ -148,38 +162,94 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
       {filtered.length === 0 ? (
         <Card className="p-6 text-sm text-muted-foreground">No matches.</Card>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {filtered.map((a, i) => (
-            <Card key={i} className="p-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-base font-semibold text-foreground">
-                  {a.name}
-                </h3>
-                {a.batch ? (
-                  <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-                    Batch {a.batch}
-                  </span>
+        <>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {paginated.map((a, i) => (
+              <Card key={i} className="p-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="text-base font-semibold text-foreground">
+                    {a.name}
+                  </h3>
+                  {a.batch ? (
+                    <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
+                      Batch {a.batch}
+                    </span>
+                  ) : null}
+                </div>
+                {(a.post || a.occupation || a.department) && (
+                  <p className="mt-1 text-sm text-foreground">
+                    {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
+                  </p>
+                )}
+                {a.postingPlace || a.address ? (
+                  <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
+                    <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+                    <span>{a.postingPlace || a.address}</span>
+                  </p>
                 ) : null}
+                {a.remarks ? (
+                  <p className="mt-2 text-xs text-muted-foreground italic">
+                    {a.remarks}
+                  </p>
+                ) : null}
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between gap-3 pt-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>Showing</span>
+              <span className="font-medium text-foreground">
+                {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)}
+              </span>
+              <span>of {filtered.length}</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Select
+                value={String(pageSize)}
+                onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}
+              >
+                <SelectTrigger className="h-8 w-[80px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[10, 25, 50, 100].map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex items-center gap-1">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  disabled={safePage <= 1}
+                  onClick={() => setPage((p) => p - 1)}
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="min-w-[3ch] text-center text-xs text-muted-foreground">
+                  {safePage} / {totalPages}
+                </span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  disabled={safePage >= totalPages}
+                  onClick={() => setPage((p) => p + 1)}
+                  aria-label="Next page"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
-              {(a.post || a.occupation || a.department) && (
-                <p className="mt-1 text-sm text-foreground">
-                  {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
-                </p>
-              )}
-              {a.postingPlace || a.address ? (
-                <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
-                  <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
-                  <span>{a.postingPlace || a.address}</span>
-                </p>
-              ) : null}
-              {a.remarks ? (
-                <p className="mt-2 text-xs text-muted-foreground italic">
-                  {a.remarks}
-                </p>
-              ) : null}
-            </Card>
-          ))}
-        </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
