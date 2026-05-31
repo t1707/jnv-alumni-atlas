@@ -198,7 +198,7 @@ function Index() {
               <Field label="Post / Role" error={errors.post?.message}>
                 <Input placeholder="e.g. Sergeant, CTO" {...register("post")} />
               </Field>
-              <Field label="Posting place" error={errors.postingPlace?.message}>
+              <Field label="Posting place / Work location" error={errors.postingPlace?.message}>
                 <Input
                   placeholder="e.g. Kuchaman City"
                   {...register("postingPlace")}
