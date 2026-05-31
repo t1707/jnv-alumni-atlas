@@ -129,19 +129,34 @@ function VisualizePage() {
 
 function SearchView({ alumni }: { alumni: Alumnus[] }) {
   const [q, setQ] = useState("");
+  const [batchFilter, setBatchFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
 
+  const batchOptions = useMemo(() => {
+    const years = new Set<string>();
+    for (const a of alumni) {
+      if (a.batch) years.add(a.batch);
+    }
+    return Array.from(years).sort((a, b) => Number(a) - Number(b));
+  }, [alumni]);
+
   const filtered = useMemo(() => {
+    let result = alumni;
     const needle = q.trim().toLowerCase();
-    if (!needle) return alumni;
-    return alumni.filter((a) =>
-      [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
-        .join(" ")
-        .toLowerCase()
-        .includes(needle),
-    );
-  }, [q, alumni]);
+    if (needle) {
+      result = result.filter((a) =>
+        [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
+          .join(" ")
+          .toLowerCase()
+          .includes(needle),
+      );
+    }
+    if (batchFilter !== "all") {
+      result = result.filter((a) => a.batch === batchFilter);
+    }
+    return result;
+  }, [q, batchFilter, alumni]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
