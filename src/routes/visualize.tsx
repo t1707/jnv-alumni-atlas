@@ -129,19 +129,34 @@ function VisualizePage() {
 
 function SearchView({ alumni }: { alumni: Alumnus[] }) {
   const [q, setQ] = useState("");
+  const [batchFilter, setBatchFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
 
+  const batchOptions = useMemo(() => {
+    const years = new Set<string>();
+    for (const a of alumni) {
+      if (a.batch) years.add(a.batch);
+    }
+    return Array.from(years).sort((a, b) => Number(a) - Number(b));
+  }, [alumni]);
+
   const filtered = useMemo(() => {
+    let result = alumni;
     const needle = q.trim().toLowerCase();
-    if (!needle) return alumni;
-    return alumni.filter((a) =>
-      [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
-        .join(" ")
-        .toLowerCase()
-        .includes(needle),
-    );
-  }, [q, alumni]);
+    if (needle) {
+      result = result.filter((a) =>
+        [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
+          .join(" ")
+          .toLowerCase()
+          .includes(needle),
+      );
+    }
+    if (batchFilter !== "all") {
+      result = result.filter((a) => a.batch === batchFilter);
+    }
+    return result;
+  }, [q, batchFilter, alumni]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -149,14 +164,32 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={q}
-          onChange={(e) => { setQ(e.target.value); setPage(1); }}
-          placeholder="Search by name, batch, occupation, place…"
-          className="pl-9"
-        />
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setPage(1); }}
+            placeholder="Search by name, batch, occupation, place…"
+            className="pl-9"
+          />
+        </div>
+        <Select
+          value={batchFilter}
+          onValueChange={(v) => { setBatchFilter(v); setPage(1); }}
+        >
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Filter by batch" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All batches</SelectItem>
+            {batchOptions.map((year) => (
+              <SelectItem key={year} value={year}>
+                Batch {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {filtered.length === 0 ? (
