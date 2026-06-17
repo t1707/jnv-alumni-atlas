@@ -297,9 +297,73 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
           </div>
         </>
       )}
+
+      <AlumnusDialog alumnus={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }
+
+function AlumnusDialog({
+  alumnus,
+  onClose,
+}: {
+  alumnus: Alumnus | null;
+  onClose: () => void;
+}) {
+  const open = !!alumnus;
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="sm:max-w-md">
+        {alumnus ? (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <User className="h-5 w-5 text-primary" />
+                {alumnus.name}
+              </DialogTitle>
+              {alumnus.batch ? (
+                <DialogDescription>Batch {alumnus.batch}</DialogDescription>
+              ) : null}
+            </DialogHeader>
+            <div className="mt-2 space-y-3 text-sm">
+              {alumnus.post ? (
+                <DetailRow icon={<Briefcase className="h-4 w-4" />} label="Post" value={alumnus.post} />
+              ) : null}
+              {alumnus.occupation ? (
+                <DetailRow icon={<Briefcase className="h-4 w-4" />} label="Occupation" value={alumnus.occupation} />
+              ) : null}
+              {alumnus.department ? (
+                <DetailRow icon={<Building2 className="h-4 w-4" />} label="Department" value={alumnus.department} />
+              ) : null}
+              {alumnus.postingPlace ? (
+                <DetailRow icon={<MapPin className="h-4 w-4" />} label="Posting place" value={alumnus.postingPlace} />
+              ) : null}
+              {alumnus.address ? (
+                <DetailRow icon={<MapPin className="h-4 w-4" />} label="Address" value={alumnus.address} />
+              ) : null}
+              {!alumnus.post && !alumnus.occupation && !alumnus.department && !alumnus.postingPlace && !alumnus.address ? (
+                <p className="text-muted-foreground">No additional details shared.</p>
+              ) : null}
+            </div>
+          </>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="mt-0.5 text-muted-foreground">{icon}</span>
+      <div className="min-w-0 flex-1">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+        <div className="text-foreground break-words">{value}</div>
+      </div>
+    </div>
+  );
+}
+
 
 type Pin = { city: CityCoord; people: Alumnus[] };
 
