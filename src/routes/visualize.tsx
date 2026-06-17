@@ -352,7 +352,7 @@ function AlumnusDialog({
   );
 }
 
-function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-start gap-3">
       <span className="mt-0.5 text-muted-foreground">{icon}</span>
