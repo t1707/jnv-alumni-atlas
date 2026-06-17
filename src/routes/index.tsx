@@ -12,7 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { GraduationCap, CheckCircle2 } from "lucide-react";
+import { GraduationCap, CheckCircle2, MapPin, ArrowRight } from "lucide-react";
+import { useI18n, LangToggle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -51,6 +52,7 @@ type FormValues = z.input<typeof formSchema>;
 function Index() {
   const submit = useServerFn(submitAlumni);
   const [submitted, setSubmitted] = useState(false);
+  const { t } = useI18n();
 
   const {
     register,
@@ -76,7 +78,7 @@ function Index() {
   const onSubmit = async (values: FormValues) => {
     try {
       await submit({ data: values });
-      toast.success("Submitted! Thank you for joining the directory.");
+      toast.success(t("index.toast.success"));
       reset();
       setSubmitted(true);
     } catch (err) {
@@ -89,39 +91,48 @@ function Index() {
       <Toaster richColors position="top-center" />
 
       <header className="bg-primary text-primary-foreground">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-6 py-5">
           <div className="flex items-center gap-3">
-            <GraduationCap className="h-6 w-6" />
-            <span className="text-lg font-semibold tracking-tight">
-              JNV Alumni Directory
+            <GraduationCap className="h-6 w-6 shrink-0" />
+            <span className="text-base font-semibold tracking-tight sm:text-lg">
+              {t("brand")}
             </span>
           </div>
-          <nav className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-2">
             <Link
               to="/visualize"
-              className="text-primary-foreground/80 hover:text-primary-foreground"
+              className="group relative inline-flex items-center gap-1.5 rounded-full bg-primary-foreground px-3 py-1.5 text-xs font-semibold text-primary shadow-sm transition hover:bg-primary-foreground/90 sm:text-sm"
             >
-              Visualize
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+              </span>
+              <MapPin className="h-3.5 w-3.5" />
+              <span>{t("nav.visualize")}</span>
+              <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
             </Link>
-            <Link
-              to="/admin"
-              className="text-primary-foreground/70 hover:text-primary-foreground"
-            >
-              Admin
-            </Link>
-          </nav>
+            <LangToggle />
+          </div>
         </div>
       </header>
 
       <section className="mx-auto max-w-5xl px-6 pt-14 pb-10">
         <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-          Reconnect with your batchmates.
+          {t("index.hero.title")}
         </h1>
         <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-          Share where life has taken you. Your details help us build a directory
-          of JNV alumni — from teachers and doctors to engineers and officers
-          across the country.
+          {t("index.hero.subtitle")}
         </p>
+        <div className="mt-6">
+          <Link
+            to="/visualize"
+            className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-sm transition hover:border-primary/40 hover:bg-accent/80"
+          >
+            <MapPin className="h-4 w-4 text-primary" />
+            {t("index.cta.explore")}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </section>
 
       <main className="mx-auto max-w-5xl px-6 pb-20">
@@ -131,19 +142,23 @@ function Index() {
               <CheckCircle2 className="mt-1 h-6 w-6 text-primary" />
               <div>
                 <h2 className="text-xl font-semibold text-foreground">
-                  You're in the directory.
+                  {t("index.success.title")}
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Thanks for sharing your details. They've been added to the
-                  alumni list.
+                  {t("index.success.body")}
                 </p>
-                <Button
-                  className="mt-5"
-                  variant="outline"
-                  onClick={() => setSubmitted(false)}
-                >
-                  Submit another entry
-                </Button>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <Button variant="outline" onClick={() => setSubmitted(false)}>
+                    {t("index.success.another")}
+                  </Button>
+                  <Link
+                    to="/visualize"
+                    className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90"
+                  >
+                    <MapPin className="h-4 w-4" />
+                    {t("index.cta.explore")}
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -153,27 +168,27 @@ function Index() {
             className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8"
           >
             <h2 className="text-lg font-semibold text-foreground">
-              Your details
+              {t("index.form.title")}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Fields marked * are required.
+              {t("index.form.required")}
             </p>
 
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
-              <Field label="Full name *" error={errors.name?.message}>
+              <Field label={t("index.field.name")} error={errors.name?.message}>
                 <Input placeholder="e.g. Avtar Kishor Gour" {...register("name")} />
               </Field>
-              <Field label="Batch (year) *" error={errors.batch?.message}>
+              <Field label={t("index.field.batch")} error={errors.batch?.message}>
                 <Input inputMode="numeric" placeholder="2007" {...register("batch")} />
               </Field>
-              <Field label="Mobile number *" error={errors.mobile?.message}>
+              <Field label={t("index.field.mobile")} error={errors.mobile?.message}>
                 <Input inputMode="tel" placeholder="9876543210" {...register("mobile")} />
               </Field>
-              <Field label="Email (optional)" error={errors.email?.message}>
+              <Field label={t("index.field.email")} error={errors.email?.message}>
                 <Input type="email" placeholder="name@example.com" {...register("email")} />
               </Field>
               <Field
-                label="Address *"
+                label={t("index.field.address")}
                 error={errors.address?.message}
                 className="sm:col-span-2"
               >
@@ -183,29 +198,29 @@ function Index() {
                   {...register("address")}
                 />
               </Field>
-              <Field label="Occupation" error={errors.occupation?.message}>
+              <Field label={t("index.field.occupation")} error={errors.occupation?.message}>
                 <Input
                   placeholder="e.g. Software Development, Govt teacher"
                   {...register("occupation")}
                 />
               </Field>
-              <Field label="Department / Firm" error={errors.department?.message}>
+              <Field label={t("index.field.department")} error={errors.department?.message}>
                 <Input
                   placeholder="e.g. Indian Air Force, HDFC Bank"
                   {...register("department")}
                 />
               </Field>
-              <Field label="Post / Role" error={errors.post?.message}>
+              <Field label={t("index.field.post")} error={errors.post?.message}>
                 <Input placeholder="e.g. Sergeant, CTO" {...register("post")} />
               </Field>
-              <Field label="Posting place / Work location" error={errors.postingPlace?.message}>
+              <Field label={t("index.field.postingPlace")} error={errors.postingPlace?.message}>
                 <Input
                   placeholder="e.g. Kuchaman City"
                   {...register("postingPlace")}
                 />
               </Field>
               <Field
-                label="Remarks (optional)"
+                label={t("index.field.remarks")}
                 error={errors.remarks?.message}
                 className="sm:col-span-2"
               >
@@ -219,7 +234,7 @@ function Index() {
 
             <div className="mt-8 flex items-center justify-end gap-3">
               <Button type="submit" disabled={isSubmitting} size="lg">
-                {isSubmitting ? "Submitting…" : "Submit details"}
+                {isSubmitting ? t("index.submitting") : t("index.submit")}
               </Button>
             </div>
           </form>
@@ -228,7 +243,7 @@ function Index() {
 
       <footer className="border-t">
         <div className="mx-auto max-w-5xl px-6 py-6 text-xs text-muted-foreground">
-          JNV Alumni Directory · Built with care for the JNV community.
+          {t("index.footer")}
         </div>
       </footer>
     </div>
