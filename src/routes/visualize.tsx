@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -22,8 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User } from "lucide-react";
 import { useI18n, LangToggle } from "@/lib/i18n";
+
 
 const WORLD_TOPO =
   "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -132,6 +140,8 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [selected, setSelected] = useState<Alumnus | null>(null);
+
 
   const batchOptions = useMemo(() => {
     const years = new Set<string>();
@@ -198,35 +208,38 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
         <>
           <div className="grid gap-3 sm:grid-cols-2">
             {paginated.map((a, i) => (
-              <Card key={i} className="p-4">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-base font-semibold text-foreground">
-                    {a.name}
-                  </h3>
-                  {a.batch ? (
-                    <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-                      Batch {a.batch}
-                    </span>
+              <button
+                key={i}
+                type="button"
+                onClick={() => setSelected(a)}
+                className="text-left"
+              >
+                <Card className="p-4 transition-colors hover:bg-accent/40 hover:border-primary/40">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="text-base font-semibold text-foreground">
+                      {a.name}
+                    </h3>
+                    {a.batch ? (
+                      <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
+                        Batch {a.batch}
+                      </span>
+                    ) : null}
+                  </div>
+                  {(a.post || a.occupation || a.department) && (
+                    <p className="mt-1 text-sm text-foreground">
+                      {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
+                    </p>
+                  )}
+                  {a.postingPlace || a.address ? (
+                    <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
+                      <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+                      <span>{a.postingPlace || a.address}</span>
+                    </p>
                   ) : null}
-                </div>
-                {(a.post || a.occupation || a.department) && (
-                  <p className="mt-1 text-sm text-foreground">
-                    {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
-                  </p>
-                )}
-                {a.postingPlace || a.address ? (
-                  <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
-                    <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
-                    <span>{a.postingPlace || a.address}</span>
-                  </p>
-                ) : null}
-                {a.remarks ? (
-                  <p className="mt-2 text-xs text-muted-foreground italic">
-                    {a.remarks}
-                  </p>
-                ) : null}
-              </Card>
+                </Card>
+              </button>
             ))}
+
           </div>
 
           <div className="flex items-center justify-between gap-3 pt-2">
@@ -284,9 +297,73 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
           </div>
         </>
       )}
+
+      <AlumnusDialog alumnus={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }
+
+function AlumnusDialog({
+  alumnus,
+  onClose,
+}: {
+  alumnus: Alumnus | null;
+  onClose: () => void;
+}) {
+  const open = !!alumnus;
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="sm:max-w-md">
+        {alumnus ? (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <User className="h-5 w-5 text-primary" />
+                {alumnus.name}
+              </DialogTitle>
+              {alumnus.batch ? (
+                <DialogDescription>Batch {alumnus.batch}</DialogDescription>
+              ) : null}
+            </DialogHeader>
+            <div className="mt-2 space-y-3 text-sm">
+              {alumnus.post ? (
+                <DetailRow icon={<Briefcase className="h-4 w-4" />} label="Post" value={alumnus.post} />
+              ) : null}
+              {alumnus.occupation ? (
+                <DetailRow icon={<Briefcase className="h-4 w-4" />} label="Occupation" value={alumnus.occupation} />
+              ) : null}
+              {alumnus.department ? (
+                <DetailRow icon={<Building2 className="h-4 w-4" />} label="Department" value={alumnus.department} />
+              ) : null}
+              {alumnus.postingPlace ? (
+                <DetailRow icon={<MapPin className="h-4 w-4" />} label="Posting place" value={alumnus.postingPlace} />
+              ) : null}
+              {alumnus.address ? (
+                <DetailRow icon={<MapPin className="h-4 w-4" />} label="Address" value={alumnus.address} />
+              ) : null}
+              {!alumnus.post && !alumnus.occupation && !alumnus.department && !alumnus.postingPlace && !alumnus.address ? (
+                <p className="text-muted-foreground">No additional details shared.</p>
+              ) : null}
+            </div>
+          </>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="mt-0.5 text-muted-foreground">{icon}</span>
+      <div className="min-w-0 flex-1">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+        <div className="text-foreground break-words">{value}</div>
+      </div>
+    </div>
+  );
+}
+
 
 type Pin = { city: CityCoord; people: Alumnus[] };
 
