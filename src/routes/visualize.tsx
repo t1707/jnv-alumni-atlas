@@ -22,8 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User } from "lucide-react";
 import { useI18n, LangToggle } from "@/lib/i18n";
+
 
 const WORLD_TOPO =
   "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
