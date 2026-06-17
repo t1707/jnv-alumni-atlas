@@ -61,6 +61,7 @@ type Alumnus = {
 
 function VisualizePage() {
   const list = useServerFn(listAlumniPublic);
+  const { t } = useI18n();
   const { data, isLoading, error } = useQuery({
     queryKey: ["alumni-public"],
     queryFn: () => list(),
@@ -71,48 +72,46 @@ function VisualizePage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-primary text-primary-foreground">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-5">
           <Link to="/" className="flex items-center gap-3">
-            <GraduationCap className="h-6 w-6" />
-            <span className="text-lg font-semibold tracking-tight">
-              JNV Alumni Directory
+            <GraduationCap className="h-6 w-6 shrink-0" />
+            <span className="text-base font-semibold tracking-tight sm:text-lg">
+              {t("brand")}
             </span>
           </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            <Link to="/" className="text-primary-foreground/70 hover:text-primary-foreground">
-              Submit
+          <div className="flex items-center gap-3">
+            <Link to="/" className="text-sm text-primary-foreground/70 hover:text-primary-foreground">
+              {t("nav.submit")}
             </Link>
-            <Link to="/visualize" className="font-medium">
-              Visualize
-            </Link>
-          </nav>
+            <LangToggle />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-6">
           <h1 className="text-3xl font-semibold tracking-tight">
-            Explore the alumni network
+            {t("viz.title")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Search by name or pan and zoom the map to see where alumni live and work.
+            {t("viz.subtitle")}
           </p>
         </div>
 
         {isLoading ? (
-          <Card className="p-8 text-sm text-muted-foreground">Loading directory…</Card>
+          <Card className="p-8 text-sm text-muted-foreground">{t("viz.loading")}</Card>
         ) : error ? (
           <Card className="p-8 text-sm text-destructive">
-            Couldn't load directory. Please try again.
+            {t("viz.error")}
           </Card>
         ) : (
           <Tabs defaultValue="search" className="w-full">
             <TabsList>
               <TabsTrigger value="search">
-                <Search className="mr-2 h-4 w-4" /> Search ({alumni.length})
+                <Search className="mr-2 h-4 w-4" /> {t("viz.tab.search")} ({alumni.length})
               </TabsTrigger>
               <TabsTrigger value="map">
-                <MapPin className="mr-2 h-4 w-4" /> Map
+                <MapPin className="mr-2 h-4 w-4" /> {t("viz.tab.map")}
               </TabsTrigger>
             </TabsList>
             <TabsContent value="search" className="mt-4">
