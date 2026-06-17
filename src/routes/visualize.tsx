@@ -208,35 +208,38 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
         <>
           <div className="grid gap-3 sm:grid-cols-2">
             {paginated.map((a, i) => (
-              <Card key={i} className="p-4">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-base font-semibold text-foreground">
-                    {a.name}
-                  </h3>
-                  {a.batch ? (
-                    <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-                      Batch {a.batch}
-                    </span>
+              <button
+                key={i}
+                type="button"
+                onClick={() => setSelected(a)}
+                className="text-left"
+              >
+                <Card className="p-4 transition-colors hover:bg-accent/40 hover:border-primary/40">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="text-base font-semibold text-foreground">
+                      {a.name}
+                    </h3>
+                    {a.batch ? (
+                      <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
+                        Batch {a.batch}
+                      </span>
+                    ) : null}
+                  </div>
+                  {(a.post || a.occupation || a.department) && (
+                    <p className="mt-1 text-sm text-foreground">
+                      {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
+                    </p>
+                  )}
+                  {a.postingPlace || a.address ? (
+                    <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
+                      <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+                      <span>{a.postingPlace || a.address}</span>
+                    </p>
                   ) : null}
-                </div>
-                {(a.post || a.occupation || a.department) && (
-                  <p className="mt-1 text-sm text-foreground">
-                    {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
-                  </p>
-                )}
-                {a.postingPlace || a.address ? (
-                  <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
-                    <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
-                    <span>{a.postingPlace || a.address}</span>
-                  </p>
-                ) : null}
-                {a.remarks ? (
-                  <p className="mt-2 text-xs text-muted-foreground italic">
-                    {a.remarks}
-                  </p>
-                ) : null}
-              </Card>
+                </Card>
+              </button>
             ))}
+
           </div>
 
           <div className="flex items-center justify-between gap-3 pt-2">
