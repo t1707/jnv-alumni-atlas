@@ -140,6 +140,8 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [selected, setSelected] = useState<Alumnus | null>(null);
+
 
   const batchOptions = useMemo(() => {
     const years = new Set<string>();
