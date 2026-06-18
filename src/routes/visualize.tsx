@@ -157,13 +157,16 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
     let result = alumni;
     const needle = q.trim().toLowerCase();
     if (needle) {
-      result = result.filter((a) =>
-        [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
-          .join(" ")
-          .toLowerCase()
-          .includes(needle),
-      );
+      const tokens = needle.split(/\s+/).filter(Boolean);
+      const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regexes = tokens.map((t) => new RegExp(`\\b${escape(t)}`, "i"));
+      result = result.filter((a) => {
+        const hay = [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
+          .join(" ");
+        return regexes.every((re) => re.test(hay));
+      });
     }
+
     if (batchFilter !== "all") {
       result = result.filter((a) => a.batch === batchFilter);
     }
