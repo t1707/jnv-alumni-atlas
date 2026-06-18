@@ -59,6 +59,7 @@ export const Route = createFileRoute("/visualize")({
 type Alumnus = {
   name: string;
   batch: string;
+  mobile: string;
   address: string;
   occupation: string;
   department: string;
@@ -66,6 +67,7 @@ type Alumnus = {
   postingPlace: string;
   remarks: string;
 };
+
 
 function VisualizePage() {
   const list = useServerFn(listAlumniPublic);
