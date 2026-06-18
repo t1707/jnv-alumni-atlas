@@ -373,6 +373,39 @@ function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; val
   );
 }
 
+function PhoneRow({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // ignore
+    }
+  };
+  return (
+    <div className="flex items-start gap-3">
+      <span className="mt-0.5 text-muted-foreground"><Phone className="h-4 w-4" /></span>
+      <div className="min-w-0 flex-1">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">Phone</div>
+        <div className="flex items-center gap-2">
+          <a href={`tel:${value}`} className="text-foreground break-words hover:underline">{value}</a>
+          <button
+            type="button"
+            onClick={copy}
+            className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+            aria-label="Copy phone number"
+          >
+            {copied ? <><Check className="h-3 w-3" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 
 type Pin = { city: CityCoord; people: Alumnus[] };
 
