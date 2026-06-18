@@ -331,6 +331,9 @@ function AlumnusDialog({
               ) : null}
             </DialogHeader>
             <div className="mt-2 space-y-3 text-sm">
+              {alumnus.mobile ? (
+                <PhoneRow value={alumnus.mobile} />
+              ) : null}
               {alumnus.post ? (
                 <DetailRow icon={<Briefcase className="h-4 w-4" />} label="Post" value={alumnus.post} />
               ) : null}
@@ -346,10 +349,11 @@ function AlumnusDialog({
               {alumnus.address ? (
                 <DetailRow icon={<MapPin className="h-4 w-4" />} label="Address" value={alumnus.address} />
               ) : null}
-              {!alumnus.post && !alumnus.occupation && !alumnus.department && !alumnus.postingPlace && !alumnus.address ? (
+              {!alumnus.mobile && !alumnus.post && !alumnus.occupation && !alumnus.department && !alumnus.postingPlace && !alumnus.address ? (
                 <p className="text-muted-foreground">No additional details shared.</p>
               ) : null}
             </div>
+
           </>
         ) : null}
       </DialogContent>
