@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User } from "lucide-react";
+import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User, Phone, Copy, Check } from "lucide-react";
 import { useI18n, LangToggle } from "@/lib/i18n";
 
 
@@ -59,6 +59,7 @@ export const Route = createFileRoute("/visualize")({
 type Alumnus = {
   name: string;
   batch: string;
+  mobile: string;
   address: string;
   occupation: string;
   department: string;
@@ -66,6 +67,7 @@ type Alumnus = {
   postingPlace: string;
   remarks: string;
 };
+
 
 function VisualizePage() {
   const list = useServerFn(listAlumniPublic);
@@ -155,13 +157,16 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
     let result = alumni;
     const needle = q.trim().toLowerCase();
     if (needle) {
-      result = result.filter((a) =>
-        [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
-          .join(" ")
-          .toLowerCase()
-          .includes(needle),
-      );
+      const tokens = needle.split(/\s+/).filter(Boolean);
+      const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regexes = tokens.map((t) => new RegExp(`\\b${escape(t)}`, "i"));
+      result = result.filter((a) => {
+        const hay = [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
+          .join(" ");
+        return regexes.every((re) => re.test(hay));
+      });
     }
+
     if (batchFilter !== "all") {
       result = result.filter((a) => a.batch === batchFilter);
     }
@@ -326,6 +331,9 @@ function AlumnusDialog({
               ) : null}
             </DialogHeader>
             <div className="mt-2 space-y-3 text-sm">
+              {alumnus.mobile ? (
+                <PhoneRow value={alumnus.mobile} />
+              ) : null}
               {alumnus.post ? (
                 <DetailRow icon={<Briefcase className="h-4 w-4" />} label="Post" value={alumnus.post} />
               ) : null}
@@ -341,10 +349,11 @@ function AlumnusDialog({
               {alumnus.address ? (
                 <DetailRow icon={<MapPin className="h-4 w-4" />} label="Address" value={alumnus.address} />
               ) : null}
-              {!alumnus.post && !alumnus.occupation && !alumnus.department && !alumnus.postingPlace && !alumnus.address ? (
+              {!alumnus.mobile && !alumnus.post && !alumnus.occupation && !alumnus.department && !alumnus.postingPlace && !alumnus.address ? (
                 <p className="text-muted-foreground">No additional details shared.</p>
               ) : null}
             </div>
+
           </>
         ) : null}
       </DialogContent>
@@ -363,6 +372,39 @@ function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; val
     </div>
   );
 }
+
+function PhoneRow({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // ignore
+    }
+  };
+  return (
+    <div className="flex items-start gap-3">
+      <span className="mt-0.5 text-muted-foreground"><Phone className="h-4 w-4" /></span>
+      <div className="min-w-0 flex-1">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">Phone</div>
+        <div className="flex items-center gap-2">
+          <a href={`tel:${value}`} className="text-foreground break-words hover:underline">{value}</a>
+          <button
+            type="button"
+            onClick={copy}
+            className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+            aria-label="Copy phone number"
+          >
+            {copied ? <><Check className="h-3 w-3" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 
 type Pin = { city: CityCoord; people: Alumnus[] };
