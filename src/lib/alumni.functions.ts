@@ -131,6 +131,7 @@ export const listAlumniPublic = createServerFn({ method: "GET" }).handler(async 
     .map((r) => ({
       name: r[1] || "",
       batch: r[2] || "",
+      mobile: r[3] || "",
       address: r[4] || "",
       occupation: r[5] || "",
       department: r[6] || "",
@@ -139,5 +140,6 @@ export const listAlumniPublic = createServerFn({ method: "GET" }).handler(async 
       remarks: r[9] || "",
     }));
   return { alumni: sanitized };
+
 });
 
