@@ -148,12 +148,10 @@ function Index() {
         <section className="mx-auto max-w-5xl px-6 pb-6">
           <RecentlyAdded
             alumni={recentAlumni}
-            onSelect={(a) =>
-              navigate({
-                to: "/visualize",
-                search: { q: `${a.name} ${a.batch}`.trim() } as never,
-              })
-            }
+            onSelect={(a) => {
+              const q = encodeURIComponent(`${a.name} ${a.batch}`.trim());
+              window.location.href = `/visualize?q=${q}`;
+            }}
           />
         </section>
       ) : null}
