@@ -129,6 +129,7 @@ export const listAlumniPublic = createServerFn({ method: "GET" }).handler(async 
   const sanitized = rows
     .filter((r) => (r[1] || "").trim().length > 0)
     .map((r) => ({
+      addedAt: r[0] || "",
       name: r[1] || "",
       batch: r[2] || "",
       mobile: r[3] || "",
