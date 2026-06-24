@@ -57,6 +57,7 @@ export const Route = createFileRoute("/visualize")({
 });
 
 type Alumnus = {
+  addedAt?: string;
   name: string;
   batch: string;
   mobile: string;
