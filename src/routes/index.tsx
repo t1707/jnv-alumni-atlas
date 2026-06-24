@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerFn } from "@tanstack/react-start";
-import { submitAlumni } from "@/lib/alumni.functions";
+import { useQuery } from "@tanstack/react-query";
+import { submitAlumni, listAlumniPublic } from "@/lib/alumni.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +15,14 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { GraduationCap, CheckCircle2, MapPin, ArrowRight } from "lucide-react";
 import { useI18n, LangToggle } from "@/lib/i18n";
+import { RecentlyAdded } from "@/routes/visualize";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
