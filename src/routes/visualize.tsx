@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User, Phone, Copy, Check } from "lucide-react";
+import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User, Phone, Copy, Check, Share2, Sparkles } from "lucide-react";
 import { useI18n, LangToggle } from "@/lib/i18n";
 
 
@@ -57,6 +57,7 @@ export const Route = createFileRoute("/visualize")({
 });
 
 type Alumnus = {
+  addedAt?: string;
   name: string;
   batch: string;
   mobile: string;
@@ -138,7 +139,10 @@ function VisualizePage() {
 }
 
 function SearchView({ alumni }: { alumni: Alumnus[] }) {
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("q") ?? "";
+  });
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
@@ -207,44 +211,18 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
         </Select>
       </div>
 
+      {!q.trim() && batchFilter === "all" ? (
+        <RecentlyAdded alumni={alumni} onSelect={setSelected} />
+      ) : null}
+
       {filtered.length === 0 ? (
         <Card className="p-6 text-sm text-muted-foreground">No matches.</Card>
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2">
             {paginated.map((a, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setSelected(a)}
-                className="text-left"
-              >
-                <Card className="p-4 transition-colors hover:bg-accent/40 hover:border-primary/40">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="text-base font-semibold text-foreground">
-                      {a.name}
-                    </h3>
-                    {a.batch ? (
-                      <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-                        Batch {a.batch}
-                      </span>
-                    ) : null}
-                  </div>
-                  {(a.post || a.occupation || a.department) && (
-                    <p className="mt-1 text-sm text-foreground">
-                      {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
-                    </p>
-                  )}
-                  {a.postingPlace || a.address ? (
-                    <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
-                      <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
-                      <span>{a.postingPlace || a.address}</span>
-                    </p>
-                  ) : null}
-                </Card>
-              </button>
+              <AlumnusTile key={i} a={a} onSelect={setSelected} />
             ))}
-
           </div>
 
           <div className="flex items-center justify-between gap-3 pt-2">
@@ -353,7 +331,9 @@ function AlumnusDialog({
                 <p className="text-muted-foreground">No additional details shared.</p>
               ) : null}
             </div>
-
+            <div className="mt-4 flex justify-end">
+              <ShareButton alumnus={alumnus} />
+            </div>
           </>
         ) : null}
       </DialogContent>
@@ -405,7 +385,121 @@ function PhoneRow({ value }: { value: string }) {
   );
 }
 
+export function AlumnusTile({ a, onSelect }: { a: Alumnus; onSelect: (a: Alumnus) => void }) {
+  const [copied, setCopied] = useState(false);
+  const copyPhone = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(a.mobile);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch { /* ignore */ }
+  };
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect(a)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(a); } }}
+      className="text-left cursor-pointer"
+    >
+      <Card className="p-4 transition-colors hover:bg-accent/40 hover:border-primary/40">
+        <div className="flex items-baseline justify-between gap-3">
+          <h3 className="text-base font-semibold text-foreground">{a.name}</h3>
+          {a.batch ? (
+            <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
+              Batch {a.batch}
+            </span>
+          ) : null}
+        </div>
+        {(a.post || a.occupation || a.department) && (
+          <p className="mt-1 text-sm text-foreground">
+            {[a.post, a.occupation, a.department].filter(Boolean).join(" · ")}
+          </p>
+        )}
+        {a.postingPlace || a.address ? (
+          <p className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
+            <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+            <span>{a.postingPlace || a.address}</span>
+          </p>
+        ) : null}
+        {a.mobile ? (
+          <div className="mt-2 flex items-center gap-2 text-xs">
+            <Phone className="h-3 w-3 text-muted-foreground" />
+            <a
+              href={`tel:${a.mobile}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-foreground hover:underline"
+            >
+              {a.mobile}
+            </a>
+            <button
+              type="button"
+              onClick={copyPhone}
+              className="ml-auto inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-accent hover:text-foreground"
+              aria-label="Copy phone number"
+            >
+              {copied ? <><Check className="h-3 w-3" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
+            </button>
+          </div>
+        ) : null}
+      </Card>
+    </div>
+  );
+}
 
+export function RecentlyAdded({ alumni, onSelect, limit = 4, compact = false }: { alumni: Alumnus[]; onSelect: (a: Alumnus) => void; limit?: number; compact?: boolean }) {
+  const recent = useMemo(() => {
+    const withTs = alumni
+      .map((a) => ({ a, ts: a.addedAt ? Date.parse(a.addedAt) : NaN }))
+      .filter((x) => !Number.isNaN(x.ts));
+    withTs.sort((x, y) => y.ts - x.ts);
+    const pool = withTs.length ? withTs.map((x) => x.a) : [...alumni].reverse();
+    return pool.slice(0, limit);
+  }, [alumni, limit]);
+
+  if (recent.length === 0) return null;
+
+  return (
+    <div className={compact ? "" : "rounded-xl border bg-accent/20 p-4"}>
+      <div className="mb-3 flex items-center gap-2">
+        <Sparkles className="h-4 w-4 text-primary" />
+        <h3 className="text-sm font-semibold text-foreground">Recently added</h3>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {recent.map((a, i) => (
+          <AlumnusTile key={i} a={a} onSelect={onSelect} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ShareButton({ alumnus }: { alumnus: Alumnus }) {
+  const [copied, setCopied] = useState(false);
+  const share = async () => {
+    const url = typeof window !== "undefined"
+      ? `${window.location.origin}/visualize?q=${encodeURIComponent(`${alumnus.name} ${alumnus.batch}`.trim())}`
+      : "";
+    const text = `${alumnus.name}${alumnus.batch ? ` (JNV ${alumnus.batch})` : ""} — JNV Alumni Directory`;
+    try {
+      if (typeof navigator !== "undefined" && (navigator as Navigator).share) {
+        await (navigator as Navigator).share({ title: text, text, url });
+        return;
+      }
+    } catch { /* user cancelled */ }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch { /* ignore */ }
+  };
+  return (
+    <Button type="button" variant="outline" size="sm" onClick={share}>
+      {copied ? <><Check className="mr-1.5 h-4 w-4" /> Link copied</> : <><Share2 className="mr-1.5 h-4 w-4" /> Share</>}
+    </Button>
+  );
+}
 
 type Pin = { city: CityCoord; people: Alumnus[] };
 
