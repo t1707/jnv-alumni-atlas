@@ -16,13 +16,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { GraduationCap, CheckCircle2, MapPin, ArrowRight } from "lucide-react";
 import { useI18n, LangToggle } from "@/lib/i18n";
 import { RecentlyAdded } from "@/routes/visualize";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
