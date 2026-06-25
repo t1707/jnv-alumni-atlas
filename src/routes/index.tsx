@@ -51,15 +51,8 @@ type FormValues = z.input<typeof formSchema>;
 
 function Index() {
   const submit = useServerFn(submitAlumni);
-  const list = useServerFn(listAlumniPublic);
-  
   const [submitted, setSubmitted] = useState(false);
   const { t } = useI18n();
-  const { data: recentData } = useQuery({
-    queryKey: ["alumni-public"],
-    queryFn: () => list(),
-  });
-  const recentAlumni = (recentData?.alumni ?? []) as Parameters<typeof RecentlyAdded>[0]["alumni"];
 
   const {
     register,
