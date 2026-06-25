@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User, Phone, Copy, Check, Share2, Sparkles } from "lucide-react";
+import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User, Phone, Copy, Check } from "lucide-react";
 import { useI18n, LangToggle } from "@/lib/i18n";
 
 
@@ -211,10 +211,6 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
         </Select>
       </div>
 
-      {!q.trim() && batchFilter === "all" ? (
-        <RecentlyAdded alumni={alumni} onSelect={setSelected} />
-      ) : null}
-
       {filtered.length === 0 ? (
         <Card className="p-6 text-sm text-muted-foreground">No matches.</Card>
       ) : (
@@ -331,9 +327,6 @@ function AlumnusDialog({
                 <p className="text-muted-foreground">No additional details shared.</p>
               ) : null}
             </div>
-            <div className="mt-4 flex justify-end">
-              <ShareButton alumnus={alumnus} />
-            </div>
           </>
         ) : null}
       </DialogContent>
@@ -448,58 +441,6 @@ export function AlumnusTile({ a, onSelect }: { a: Alumnus; onSelect: (a: Alumnus
   );
 }
 
-export function RecentlyAdded({ alumni, onSelect, limit = 4, compact = false }: { alumni: Alumnus[]; onSelect: (a: Alumnus) => void; limit?: number; compact?: boolean }) {
-  const recent = useMemo(() => {
-    const withTs = alumni
-      .map((a) => ({ a, ts: a.addedAt ? Date.parse(a.addedAt) : NaN }))
-      .filter((x) => !Number.isNaN(x.ts));
-    withTs.sort((x, y) => y.ts - x.ts);
-    const pool = withTs.length ? withTs.map((x) => x.a) : [...alumni].reverse();
-    return pool.slice(0, limit);
-  }, [alumni, limit]);
-
-  if (recent.length === 0) return null;
-
-  return (
-    <div className={compact ? "" : "rounded-xl border bg-accent/20 p-4"}>
-      <div className="mb-3 flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-semibold text-foreground">Recently added</h3>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {recent.map((a, i) => (
-          <AlumnusTile key={i} a={a} onSelect={onSelect} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ShareButton({ alumnus }: { alumnus: Alumnus }) {
-  const [copied, setCopied] = useState(false);
-  const share = async () => {
-    const url = typeof window !== "undefined"
-      ? `${window.location.origin}/visualize?q=${encodeURIComponent(`${alumnus.name} ${alumnus.batch}`.trim())}`
-      : "";
-    const text = `${alumnus.name}${alumnus.batch ? ` (JNV ${alumnus.batch})` : ""} — JNV Alumni Directory`;
-    try {
-      if (typeof navigator !== "undefined" && (navigator as Navigator).share) {
-        await (navigator as Navigator).share({ title: text, text, url });
-        return;
-      }
-    } catch { /* user cancelled */ }
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch { /* ignore */ }
-  };
-  return (
-    <Button type="button" variant="outline" size="sm" onClick={share}>
-      {copied ? <><Check className="mr-1.5 h-4 w-4" /> Link copied</> : <><Share2 className="mr-1.5 h-4 w-4" /> Share</>}
-    </Button>
-  );
-}
 
 type Pin = { city: CityCoord; people: Alumnus[] };
 
