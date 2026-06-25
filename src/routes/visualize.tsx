@@ -327,9 +327,6 @@ function AlumnusDialog({
                 <p className="text-muted-foreground">No additional details shared.</p>
               ) : null}
             </div>
-            <div className="mt-4 flex justify-end">
-              <ShareButton alumnus={alumnus} />
-            </div>
           </>
         ) : null}
       </DialogContent>
