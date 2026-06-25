@@ -211,10 +211,6 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
         </Select>
       </div>
 
-      {!q.trim() && batchFilter === "all" ? (
-        <RecentlyAdded alumni={alumni} onSelect={setSelected} />
-      ) : null}
-
       {filtered.length === 0 ? (
         <Card className="p-6 text-sm text-muted-foreground">No matches.</Card>
       ) : (
