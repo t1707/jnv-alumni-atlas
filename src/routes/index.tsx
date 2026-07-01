@@ -176,10 +176,10 @@ function Index() {
 
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
               <Field label={t("index.field.name")} error={errors.name?.message}>
-                <Input placeholder="e.g. Avtar Kishor Gour" {...register("name")} />
+                <Input placeholder="your name" {...register("name")} />
               </Field>
               <Field label={t("index.field.batch")} error={errors.batch?.message}>
-                <Input inputMode="numeric" placeholder="2007" {...register("batch")} />
+                <Input inputMode="numeric" placeholder="1950" {...register("batch")} />
               </Field>
               <Field label={t("index.field.mobile")} error={errors.mobile?.message}>
                 <Input inputMode="tel" placeholder="9876543210" {...register("mobile")} />
@@ -200,7 +200,7 @@ function Index() {
               </Field>
               <Field label={t("index.field.occupation")} error={errors.occupation?.message}>
                 <Input
-                  placeholder="e.g. Software Development, Govt teacher"
+                  placeholder="e.g. Business, Teacher"
                   {...register("occupation")}
                 />
               </Field>
