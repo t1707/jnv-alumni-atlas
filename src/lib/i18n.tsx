@@ -19,6 +19,7 @@ const translations: Record<Lang, Dict> = {
     "index.form.title": "Your details",
     "index.form.required": "Fields marked * are required.",
     "index.field.name": "Full name *",
+    "index.placeholder.name": "your name",
     "index.field.batch": "Batch (year) *",
     "index.field.mobile": "Mobile number *",
     "index.field.email": "Email (optional)",
