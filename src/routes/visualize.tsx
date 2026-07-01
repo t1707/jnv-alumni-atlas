@@ -39,17 +39,17 @@ const WORLD_TOPO =
 export const Route = createFileRoute("/visualize")({
   head: () => ({
     meta: [
-      { title: "Visualize — JNV Alumni Directory" },
+      { title: "Visualize — JNV Kuchaman Alumni Directory" },
       {
         name: "description",
         content:
-          "Search JNV alumni by name and explore where they live and work on an interactive map.",
+          "Search JNV Kuchaman alumni by name and explore where they live and work on an interactive map.",
       },
-      { property: "og:title", content: "Visualize — JNV Alumni Directory" },
+      { property: "og:title", content: "Visualize — JNV Kuchaman Alumni Directory" },
       {
         property: "og:description",
         content:
-          "Search alumni by name and explore the JNV alumni network on a zoomable map.",
+          "Search alumni by name and explore the JNV Kuchaman alumni network on a zoomable map.",
       },
     ],
   }),
