@@ -6,7 +6,7 @@ type Dict = Record<string, string>;
 
 const translations: Record<Lang, Dict> = {
   en: {
-    "brand": "JNV Alumni Directory",
+    "brand": "JNV Kuchaman Alumni Directory",
     "nav.submit": "Submit",
     "nav.visualize": "Explore map",
     "nav.admin": "Admin",
@@ -14,7 +14,7 @@ const translations: Record<Lang, Dict> = {
 
     // Index
     "index.hero.title": "Reconnect with your batchmates.",
-    "index.hero.subtitle": "Share where life has taken you. Your details help us build a directory of JNV alumni — from teachers and doctors to engineers and officers across the country.",
+    "index.hero.subtitle": "Share where life has taken you. Your details help us build a directory of JNV Kuchaman alumni — from teachers and doctors to engineers and officers across the country.",
     "index.cta.explore": "Explore the alumni map",
     "index.form.title": "Your details",
     "index.form.required": "Fields marked * are required.",
@@ -35,7 +35,7 @@ const translations: Record<Lang, Dict> = {
     "index.success.body": "Thanks for sharing your details. They've been added to the alumni list.",
     "index.success.another": "Submit another entry",
     "index.toast.success": "Submitted! Thank you for joining the directory.",
-    "index.footer": "JNV Alumni Directory · Built with care for the JNV community.",
+    "index.footer": "JNV Kuchaman Alumni Directory · Built with care for the JNV Kuchaman community.",
 
     // Visualize
     "viz.title": "Explore the alumni network",
@@ -61,7 +61,7 @@ const translations: Record<Lang, Dict> = {
     "viz.alumniCount": "alumni",
   },
   hi: {
-    "brand": "जे.एन.वी. पूर्व छात्र निर्देशिका",
+    "brand": "जे.एन.वी. कुचामन पूर्व छात्र निर्देशिका",
     "nav.submit": "विवरण भरें",
     "nav.visualize": "मानचित्र देखें",
     "nav.admin": "एडमिन",
@@ -69,7 +69,7 @@ const translations: Record<Lang, Dict> = {
 
     // Index
     "index.hero.title": "अपने सहपाठियों से पुनः जुड़ें।",
-    "index.hero.subtitle": "अपनी जीवन-यात्रा साझा करें। आपके विवरण से हम पूरे देश में फैले जे.एन.वी. के पूर्व छात्रों — शिक्षकों, डॉक्टरों, इंजीनियरों और अधिकारियों — की निर्देशिका तैयार कर पाएँगे।",
+    "index.hero.subtitle": "अपनी जीवन-यात्रा साझा करें। आपके विवरण से हम पूरे देश में फैले जे.एन.वी. कुचामन के पूर्व छात्रों — शिक्षकों, डॉक्टरों, इंजीनियरों और अधिकारियों — की निर्देशिका तैयार कर पाएँगे।",
     "index.cta.explore": "पूर्व छात्र मानचित्र देखें",
     "index.form.title": "आपका विवरण",
     "index.form.required": "* चिह्नित फ़ील्ड भरना अनिवार्य है।",
@@ -90,7 +90,7 @@ const translations: Record<Lang, Dict> = {
     "index.success.body": "विवरण साझा करने के लिए धन्यवाद। आपका नाम सूची में जोड़ दिया गया है।",
     "index.success.another": "एक और प्रविष्टि भेजें",
     "index.toast.success": "धन्यवाद! आपका विवरण निर्देशिका में जुड़ गया है।",
-    "index.footer": "जे.एन.वी. पूर्व छात्र निर्देशिका · जे.एन.वी. समुदाय के लिए सादर निर्मित।",
+    "index.footer": "जे.एन.वी. कुचामन पूर्व छात्र निर्देशिका · जे.एन.वी. कुचामन समुदाय के लिए सादर निर्मित।",
 
     // Visualize
     "viz.title": "पूर्व छात्र नेटवर्क देखें",

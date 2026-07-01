@@ -18,16 +18,16 @@ import { useI18n, LangToggle } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "JNV Alumni Directory — Submit your details" },
+      { title: "JNV Kuchaman Alumni Directory — Submit your details" },
       {
         name: "description",
         content:
-          "Join the JNV Alumni Directory. Share your batch, occupation and current posting so classmates can stay in touch.",
+          "Join the JNV Kuchaman Alumni Directory. Share your batch, occupation and current posting so classmates can stay in touch.",
       },
-      { property: "og:title", content: "JNV Alumni Directory" },
+      { property: "og:title", content: "JNV Kuchaman Alumni Directory" },
       {
         property: "og:description",
-        content: "Share your details to be listed in the JNV Alumni Directory.",
+        content: "Share your details to be listed in the JNV Kuchaman Alumni Directory.",
       },
     ],
   }),

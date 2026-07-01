@@ -19,7 +19,7 @@ import { Lock, Download, Search, GraduationCap, ChevronLeft, ChevronRight } from
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Admin · JNV Alumni Directory" },
+      { title: "Admin · JNV Kuchaman Alumni Directory" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -70,7 +70,7 @@ function Admin() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `jnv-alumni-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `jnv-kuchaman-alumni-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -105,7 +105,7 @@ function Admin() {
           <Link to="/" className="flex items-center gap-3">
             <GraduationCap className="h-6 w-6" />
             <span className="text-lg font-semibold tracking-tight">
-              JNV Alumni Directory
+              JNV Kuchaman Alumni Directory
             </span>
           </Link>
           <span className="text-xs text-primary-foreground/70">Admin</span>
