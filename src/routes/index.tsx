@@ -179,7 +179,7 @@ function Index() {
                 <Input placeholder="your name" {...register("name")} />
               </Field>
               <Field label={t("index.field.batch")} error={errors.batch?.message}>
-                <Input inputMode="numeric" placeholder="2007" {...register("batch")} />
+                <Input inputMode="numeric" placeholder="1950" {...register("batch")} />
               </Field>
               <Field label={t("index.field.mobile")} error={errors.mobile?.message}>
                 <Input inputMode="tel" placeholder="9876543210" {...register("mobile")} />
