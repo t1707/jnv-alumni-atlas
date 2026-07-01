@@ -75,7 +75,7 @@ const translations: Record<Lang, Dict> = {
     "index.form.required": "* चिह्नित फ़ील्ड भरना अनिवार्य है।",
     "index.field.name": "पूरा नाम *",
     "index.placeholder.name": "आपका नाम",
-    "index.field.batch": "बैच (वर्ष) *",
+    "index.field.batch": "बैच (पासआउट वर्ष) *",
     "index.field.mobile": "मोबाइल नंबर *",
     "index.field.email": "ईमेल (वैकल्पिक)",
     "index.field.address": "पता *",
