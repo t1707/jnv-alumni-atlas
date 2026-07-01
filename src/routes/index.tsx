@@ -200,7 +200,7 @@ function Index() {
               </Field>
               <Field label={t("index.field.occupation")} error={errors.occupation?.message}>
                 <Input
-                  placeholder="e.g. Software Development, Govt teacher"
+                  placeholder="e.g. Business, Teacher"
                   {...register("occupation")}
                 />
               </Field>
