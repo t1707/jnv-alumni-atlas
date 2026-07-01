@@ -176,7 +176,7 @@ function Index() {
 
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
               <Field label={t("index.field.name")} error={errors.name?.message}>
-                <Input placeholder="your name" {...register("name")} />
+                <Input placeholder={t("index.placeholder.name")} {...register("name")} />
               </Field>
               <Field label={t("index.field.batch")} error={errors.batch?.message}>
                 <Input inputMode="numeric" placeholder="1950" {...register("batch")} />
