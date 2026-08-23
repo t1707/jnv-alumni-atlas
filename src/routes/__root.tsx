@@ -10,6 +10,8 @@ import {
 
 import appCss from "../styles.css?url";
 import { LanguageProvider } from "@/lib/i18n";
+import { InstallAppBanner } from "@/components/InstallAppBanner";
+
 
 function NotFoundComponent() {
   return (
