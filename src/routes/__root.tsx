@@ -87,14 +87,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Alumni Connect is a web application for collecting and managing alumni data." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/026d1fcf-d3b9-45a5-a5c1-f6b954a14f00/id-preview-b2a00f36--d6d07207-2936-4d55-9cea-0befd8f1e821.lovable.app-1779095995264.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/026d1fcf-d3b9-45a5-a5c1-f6b954a14f00/id-preview-b2a00f36--d6d07207-2936-4d55-9cea-0befd8f1e821.lovable.app-1779095995264.png" },
+      { name: "theme-color", content: "#0d1b3e" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "JNV Alumni" },
+      { name: "application-name", content: "JNV Alumni" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
     ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -122,7 +132,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <Outlet />
+        <InstallAppBanner />
       </LanguageProvider>
     </QueryClientProvider>
   );
 }
+
