@@ -14,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Lock, Download, Search, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react";
+import { Lock, Download, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -103,7 +104,7 @@ function Admin() {
       <header className="bg-primary text-primary-foreground">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link to="/" className="flex items-center gap-3">
-            <GraduationCap className="h-6 w-6" />
+            <BrandMark />
             <span className="text-lg font-semibold tracking-tight">
               JNV Kuchaman Alumni Directory
             </span>

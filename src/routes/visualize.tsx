@@ -29,7 +29,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { GraduationCap, Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User, Phone, Copy, Check } from "lucide-react";
+import { Search, MapPin, Minus, Plus, RotateCcw, ChevronLeft, ChevronRight, Briefcase, Building2, User, Phone, Copy, Check } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 import { useI18n, LangToggle } from "@/lib/i18n";
 
 
@@ -85,7 +86,7 @@ function VisualizePage() {
       <header className="bg-primary text-primary-foreground">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-5">
           <Link to="/" className="flex items-center gap-3">
-            <GraduationCap className="h-6 w-6 shrink-0" />
+            <BrandMark />
             <span className="text-base font-semibold tracking-tight sm:text-lg">
               {t("brand")}
             </span>

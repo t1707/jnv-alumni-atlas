@@ -12,7 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { GraduationCap, CheckCircle2, MapPin, ArrowRight } from "lucide-react";
+import { CheckCircle2, MapPin, ArrowRight } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 import { useI18n, LangToggle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
@@ -93,7 +94,7 @@ function Index() {
       <header className="bg-primary text-primary-foreground">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-6 py-5">
           <div className="flex items-center gap-3">
-            <GraduationCap className="h-6 w-6 shrink-0" />
+            <BrandMark />
             <span className="text-base font-semibold tracking-tight sm:text-lg">
               {t("brand")}
             </span>
