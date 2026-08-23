@@ -70,23 +70,28 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+const SITE_URL = "https://jnvkparivar.vercel.app";
+const SITE_DESCRIPTION =
+  "Directory of JNV Kuchaman alumni — submit your details and explore the alumni map.";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Alumni Connect is a web application for collecting and managing alumni data." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Alumni Connect is a web application for collecting and managing alumni data." },
+      { title: "JNV Kuchaman Alumni Directory" },
+      { name: "description", content: SITE_DESCRIPTION },
+      { property: "og:title", content: "JNV Kuchaman Alumni Directory" },
+      { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Alumni Connect is a web application for collecting and managing alumni data." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/026d1fcf-d3b9-45a5-a5c1-f6b954a14f00/id-preview-b2a00f36--d6d07207-2936-4d55-9cea-0befd8f1e821.lovable.app-1779095995264.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/026d1fcf-d3b9-45a5-a5c1-f6b954a14f00/id-preview-b2a00f36--d6d07207-2936-4d55-9cea-0befd8f1e821.lovable.app-1779095995264.png" },
+      { name: "twitter:title", content: "JNV Kuchaman Alumni Directory" },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      // Absolute URLs — Facebook and several other scrapers reject relative
+      // ones. Update SITE_URL if a custom domain replaces the vercel.app host.
+      { property: "og:image", content: `${SITE_URL}/og-image.png` },
+      { name: "twitter:image", content: `${SITE_URL}/og-image.png` },
+      { property: "og:url", content: SITE_URL },
       { name: "theme-color", content: "#0d1b3e" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
