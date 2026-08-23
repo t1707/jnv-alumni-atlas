@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 .output
+
 .vinxi
 .tanstack/**
 .nitro
@@ -19,6 +20,9 @@ dist-ssr
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+
+# Vercel
+.vercel
 
 # Editor directories and files
 .vscode/*
@@ -30,3 +34,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets — keep last: the negation must follow every .env* pattern,
+# since later gitignore rules override earlier ones.
+.env*
+*-key.json
+!.env.example

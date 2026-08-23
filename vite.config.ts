@@ -12,4 +12,8 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  // Hard-pin Vercel. Without this, Nitro defaults to the `cloudflare-module`
+  // preset. Vercel's own builder would auto-detect, but pinning keeps local
+  // builds identical to CI instead of silently target-switching.
+  nitro: { preset: "vercel" },
 });

@@ -1,21 +1,40 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { getAccessToken, parseServiceAccount } from "./google-auth";
 
-const GATEWAY = "https://connector-gateway.lovable.dev/google_sheets/v4";
+const SHEETS_API = "https://sheets.googleapis.com/v4";
 
 function env() {
-  const lovableKey = process.env.LOVABLE_API_KEY;
-  const sheetsKey = process.env.GOOGLE_SHEETS_API_KEY;
+  const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   const sheetId = process.env.ALUMNI_SHEET_ID;
   const rawTab = process.env.ALUMNI_SHEET_TAB;
   // Guard against gid-style values (e.g. "0") accidentally stored as tab name
   const tab = !rawTab || /^\d+$/.test(rawTab) ? "Sheet1" : rawTab;
   const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!lovableKey) throw new Error("LOVABLE_API_KEY is not configured");
-  if (!sheetsKey) throw new Error("GOOGLE_SHEETS_API_KEY is not configured");
+  if (!serviceAccountJson) throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON is not configured");
   if (!sheetId) throw new Error("ALUMNI_SHEET_ID is not configured");
   if (!adminPassword) throw new Error("ADMIN_PASSWORD is not configured");
-  return { lovableKey, sheetsKey, sheetId, tab, adminPassword };
+  return {
+    serviceAccount: parseServiceAccount(serviceAccountJson),
+    sheetId,
+    tab,
+    adminPassword,
+  };
+}
+
+async function sheetsFetch(
+  serviceAccount: ReturnType<typeof env>["serviceAccount"],
+  path: string,
+  init?: RequestInit,
+) {
+  const token = await getAccessToken(serviceAccount);
+  return fetch(`${SHEETS_API}${path}`, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
 
 const submitSchema = z.object({
@@ -45,7 +64,7 @@ function rateLimit(key: string, max = 5, windowMs = 60_000) {
 export const submitAlumni = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => submitSchema.parse(input))
   .handler(async ({ data }) => {
-    const { lovableKey, sheetsKey, sheetId, tab } = env();
+    const { serviceAccount, sheetId, tab } = env();
     if (!rateLimit("global")) {
       throw new Error("Too many submissions, please try again in a minute.");
     }
@@ -63,16 +82,16 @@ export const submitAlumni = createServerFn({ method: "POST" })
       data.remarks,
       data.email,
     ];
-    const url = `${GATEWAY}/spreadsheets/${sheetId}/values/${tab}!A:K:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovableKey}`,
-        "X-Connection-Api-Key": sheetsKey,
-        "Content-Type": "application/json",
+    const range = encodeURIComponent(`${tab}!A:K`);
+    const res = await sheetsFetch(
+      serviceAccount,
+      `/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ values: [row] }),
       },
-      body: JSON.stringify({ values: [row] }),
-    });
+    );
     if (!res.ok) {
       const text = await res.text();
       console.error("Sheets append failed", res.status, text);
@@ -84,17 +103,12 @@ export const submitAlumni = createServerFn({ method: "POST" })
 export const listAlumni = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ password: z.string().min(1) }).parse(input))
   .handler(async ({ data }) => {
-    const { lovableKey, sheetsKey, sheetId, tab, adminPassword } = env();
+    const { serviceAccount, sheetId, tab, adminPassword } = env();
     if (data.password !== adminPassword) {
       throw new Error("Invalid password");
     }
-    const url = `${GATEWAY}/spreadsheets/${sheetId}/values/${tab}!A1:K10000`;
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${lovableKey}`,
-        "X-Connection-Api-Key": sheetsKey,
-      },
-    });
+    const range = encodeURIComponent(`${tab}!A1:K10000`);
+    const res = await sheetsFetch(serviceAccount, `/spreadsheets/${sheetId}/values/${range}`);
     if (!res.ok) {
       const text = await res.text();
       console.error("Sheets read failed", res.status, text);
@@ -106,16 +120,12 @@ export const listAlumni = createServerFn({ method: "POST" })
     return { header, rows };
   });
 
-// Public listing: strips mobile + email
+// Public listing: strips email. Mobile is intentionally exposed so alumni can
+// reach each other — do not add email back without revisiting that decision.
 export const listAlumniPublic = createServerFn({ method: "GET" }).handler(async () => {
-  const { lovableKey, sheetsKey, sheetId, tab } = env();
-  const url = `${GATEWAY}/spreadsheets/${sheetId}/values/${tab}!A1:K10000`;
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${lovableKey}`,
-      "X-Connection-Api-Key": sheetsKey,
-    },
-  });
+  const { serviceAccount, sheetId, tab } = env();
+  const range = encodeURIComponent(`${tab}!A1:K10000`);
+  const res = await sheetsFetch(serviceAccount, `/spreadsheets/${sheetId}/values/${range}`);
   if (!res.ok) {
     const text = await res.text();
     console.error("Sheets public read failed", res.status, text);
