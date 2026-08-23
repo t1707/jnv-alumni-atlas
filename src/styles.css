@@ -49,6 +49,8 @@
   --color-brand-accent-foreground: var(--brand-accent-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-map-land: var(--map-land);
+  --color-map-land-hover: var(--map-land-hover);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -96,6 +98,10 @@
   --brand-accent-foreground: oklch(0.99 0.003 282);
   --success: oklch(0.469 0.104 139.3);
   --success-foreground: oklch(0.99 0.003 282);
+  /* Land on the alumni map — the emblem's green, desaturated so it reads as a
+     surface rather than a status colour, and keeps terracotta pins legible. */
+  --map-land: oklch(0.945 0.028 139.3);
+  --map-land-hover: oklch(0.9 0.05 139.3);
   /* Chart series follow the emblem: terracotta, green, gold, orange, indigo. */
   --chart-1: oklch(0.505 0.154 29.4);
   --chart-2: oklch(0.469 0.104 139.3);
@@ -138,6 +144,8 @@
   --brand-accent-foreground: oklch(0.208 0.042 282);
   --success: oklch(0.66 0.12 139.3);
   --success-foreground: oklch(0.208 0.042 282);
+  --map-land: oklch(0.22 0.035 139.3);
+  --map-land-hover: oklch(0.3 0.05 139.3);
   --chart-1: oklch(0.64 0.15 29.4);
   --chart-2: oklch(0.66 0.12 139.3);
   --chart-3: oklch(0.75 0.11 78.1);

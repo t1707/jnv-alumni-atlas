@@ -401,7 +401,7 @@ export function AlumnusTile({ a, onSelect }: { a: Alumnus; onSelect: (a: Alumnus
         <div className="flex items-baseline justify-between gap-3">
           <h3 className="text-base font-semibold text-foreground">{a.name}</h3>
           {a.batch ? (
-            <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
+            <span className="rounded-md bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
               Batch {a.batch}
             </span>
           ) : null}
@@ -533,12 +533,12 @@ function MapView({ alumni }: { alumni: Alumnus[] }) {
                   <Geography
                     key={geo.rsmKey}
                     geography={geo}
-                    fill="var(--card)"
+                    fill="var(--map-land)"
                     stroke="var(--border)"
                     strokeWidth={0.4}
                     style={{
                       default: { outline: "none" },
-                      hover: { fill: "var(--accent)", outline: "none" },
+                      hover: { fill: "var(--map-land-hover)", outline: "none" },
                       pressed: { outline: "none" },
                     }}
                   />
