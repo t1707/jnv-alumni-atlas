@@ -1,56 +1,31 @@
-## Goal
+# Make the directory feel like an app
 
-Modern public web page where alumni submit their info; each submission appends a row to a Google Sheet. An admin-only page reads the same sheet to display the directory.
+## Your options
 
-## Pages (TanStack Start routes)
+1. **Installable web app (recommended)** — Users open the site once, tap "Add to Home Screen" / "Install", and it gets a real app icon, launches full-screen without the browser address bar, and opens instantly. No store, no review, no accounts. Works on Android (Chrome) and iOS (Safari share sheet).
+2. **Store-published native app** — Wrapping the site with Capacitor and submitting to Play Store / App Store. Requires developer accounts ($25 one-time Google, $99/yr Apple), review cycles, and a local Mac/Android build setup. You said this isn't needed.
+3. **Do nothing** — Users keep visiting the URL in a browser tab.
 
-- `/` — Landing + submission form (public)
-  - Hero: "JNV Alumni Directory" with short intro
-  - Form fields: Name, Batch (year), Mobile, Address, Occupation, Department/Firm, Post, Posting Place, Remarks
-  - Client-side validation with zod + react-hook-form
-  - Success / error toast (sonner)
-- `/admin` — Directory table (admin-only, password-gated)
-  - Simple password prompt (compared against a server-side secret)
-  - Server fn fetches rows from the sheet, renders searchable/filterable table (search by name, batch filter)
-  - CSV download button
+This plan implements option 1.
 
-## Backend (server functions, no database)
+## What gets built
 
-Two server functions in `src/lib/alumni.functions.ts`:
+- **App manifest** (`public/manifest.webmanifest`): app name "JNV Kuchaman Alumni", short name "JNV Alumni", standalone display mode, navy theme color matching the site, portrait orientation.
+- **App icons**: generated logo mark (JNV Kuchaman alumni theme) exported at 192px, 512px, maskable 512px, plus a 180px Apple touch icon and favicon, all under `public/`.
+- **Head tags** in `src/routes/__root.tsx`: manifest link, `theme-color`, `apple-touch-icon`, `apple-mobile-web-app-capable`, and title tags so the launched app shows the right name.
+- **Install hint banner** (small, dismissible, bilingual EN/HI):
+  - Android/Chrome: captures the browser install event and shows an "Install app" button.
+  - iOS/Safari: shows a one-line "Tap Share, then Add to Home Screen" tip.
+  - Remembers dismissal in localStorage; hidden when already running installed.
 
-1. `submitAlumni` (POST, public)
-   - Zod validation (lengths, mobile regex, batch year range)
-   - Appends a row to the sheet via Google Sheets connector gateway:
-     `POST connector-gateway.lovable.dev/google_sheets/v4/spreadsheets/{id}/values/{sheet}!A:J:append?valueInputOption=USER_ENTERED`
-   - Adds timestamp as first column
-   - Basic in-memory rate limit per IP
+## Not included
 
-2. `listAlumni` (POST, admin-only)
-   - Verifies submitted password against `ADMIN_PASSWORD`
-   - Reads `GET /spreadsheets/{id}/values/{sheet}!A:K`
-   - Returns parsed rows
+- No offline mode / service worker — you didn't ask for offline use, and it adds cache-staleness risk. Can be added later if you want the directory readable without internet.
+- No push notifications.
+- No store submission.
 
-## Setup steps
+## Technical notes
 
-1. Connect Google Sheets connector (`standard_connectors--connect` with `google_sheets`).
-2. Ask user for the target Spreadsheet ID + sheet/tab name (or auto-create headers if empty).
-3. Add secrets: `ADMIN_PASSWORD`, `ALUMNI_SHEET_ID`, `ALUMNI_SHEET_TAB` (e.g. "Sheet1").
-4. On first run, ensure header row exists (Timestamp, Name, Batch, Mobile, Address, Occupation, Department/Firm, Post, Posting Place, Remarks).
-
-## Design
-
-- Modern, clean, professional. Deep navy primary (matches uploaded screenshot header), white background, subtle card shadows, rounded-xl.
-- Typography: Inter / similar sans.
-- Tokens defined in `src/styles.css` (oklch), shadcn components for form + table.
-- Responsive single-column form on mobile; two-column on desktop.
-
-## Out of scope
-
-- No user auth (only an admin password)
-- No moderation (auto-publish per your choice)
-- No edit/delete from UI (manage directly in the Sheet)
-
-## Open items I'll ask before building
-
-- Spreadsheet ID & sheet tab name
-- Admin password (added via secrets tool)
+- Manifest-only PWA path (no `vite-plugin-pwa`, no service worker), per Lovable's PWA guidance — safest for previews and avoids stale-cache issues.
+- Install banner is a small client component rendered in `__root.tsx`, using the `beforeinstallprompt` event with an iOS user-agent fallback.
+- Installability only works on the published HTTPS URL, not inside the editor preview iframe.
