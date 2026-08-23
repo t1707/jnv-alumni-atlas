@@ -556,7 +556,7 @@ function MapView({ alumni }: { alumni: Alumnus[] }) {
                 >
                   <circle
                     r={r}
-                    fill="var(--primary)"
+                    fill="var(--brand-accent)"
                     stroke="var(--background)"
                     strokeWidth={1 / Math.sqrt(position.zoom)}
                     style={{ cursor: "pointer" }}

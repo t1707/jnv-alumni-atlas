@@ -140,7 +140,7 @@ function Index() {
         {submitted ? (
           <div className="rounded-2xl border bg-card p-8 shadow-sm">
             <div className="flex items-start gap-4">
-              <CheckCircle2 className="mt-1 h-6 w-6 text-primary" />
+              <CheckCircle2 className="mt-1 h-6 w-6 text-success" />
               <div>
                 <h2 className="text-xl font-semibold text-foreground">
                   {t("index.success.title")}
@@ -234,7 +234,7 @@ function Index() {
             </div>
 
             <div className="mt-8 flex items-center justify-end gap-3">
-              <Button type="submit" disabled={isSubmitting} size="lg">
+              <Button type="submit" variant="brand" disabled={isSubmitting} size="lg">
                 {isSubmitting ? t("index.submitting") : t("index.submit")}
               </Button>
             </div>
