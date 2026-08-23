@@ -37,6 +37,14 @@ const translations: Record<Lang, Dict> = {
     "index.toast.success": "Submitted! Thank you for joining the directory.",
     "index.footer": "JNV Kuchaman Alumni Directory · Built with care for the JNV Kuchaman community.",
 
+    // Install
+    "install.title": "Install this as an app",
+    "install.body": "Add it to your home screen and open it in one tap.",
+    "install.ios": "Tap the Share button, then choose “Add to Home Screen”.",
+    "install.action": "Install",
+    "install.dismiss": "Dismiss",
+
+
     // Visualize
     "viz.title": "Explore the alumni network",
     "viz.subtitle": "Search by name or pan and zoom the map to see where alumni live and work.",
@@ -114,7 +122,15 @@ const translations: Record<Lang, Dict> = {
     "viz.stats.unplaced": "बिना पहचाने गए शहर वाले",
     "viz.clear": "हटाएँ",
     "viz.alumniCount": "पूर्व छात्र",
+
+    // Install
+    "install.title": "इसे ऐप की तरह इंस्टॉल करें",
+    "install.body": "होम स्क्रीन पर जोड़ें और एक टैप में खोलें।",
+    "install.ios": "शेयर बटन दबाएँ, फिर “Add to Home Screen” चुनें।",
+    "install.action": "इंस्टॉल",
+    "install.dismiss": "बंद करें",
   },
+
 };
 
 const LangContext = createContext<{
