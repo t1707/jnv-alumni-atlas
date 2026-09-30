@@ -70,6 +70,26 @@ type Alumnus = {
   remarks: string;
 };
 
+// Titles and their common abbreviations, so searching either form finds both.
+const SEARCH_SYNONYMS: string[][] = [
+  ["doctor", "dr"],
+  ["engineer", "engg", "er"],
+  ["professor", "prof"],
+  ["advocate", "adv"],
+];
+
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// The typed token keeps prefix matching; its synonyms must match as whole words
+// so "doctor" finds "Dr." but not "Driver".
+function tokenRegex(token: string): RegExp {
+  const bare = token.replace(/\.+$/, "");
+  const synonyms = (SEARCH_SYNONYMS.find((group) => group.includes(bare)) ?? [])
+    .filter((s) => s !== bare)
+    .map((s) => `${escapeRegex(s)}\\b`);
+  return new RegExp(`\\b(?:${[escapeRegex(token), ...synonyms].join("|")})`, "i");
+}
+
 
 function VisualizePage() {
   const list = useServerFn(listAlumniPublic);
@@ -163,8 +183,7 @@ function SearchView({ alumni }: { alumni: Alumnus[] }) {
     const needle = q.trim().toLowerCase();
     if (needle) {
       const tokens = needle.split(/\s+/).filter(Boolean);
-      const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regexes = tokens.map((t) => new RegExp(`\\b${escape(t)}`, "i"));
+      const regexes = tokens.map(tokenRegex);
       result = result.filter((a) => {
         const hay = [a.name, a.batch, a.occupation, a.department, a.post, a.postingPlace, a.address]
           .join(" ");
